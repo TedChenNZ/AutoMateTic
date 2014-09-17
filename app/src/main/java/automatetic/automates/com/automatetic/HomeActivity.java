@@ -3,6 +3,7 @@ package automatetic.automates.com.automatetic;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,8 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.util.Calendar;
+
 
 public class HomeActivity extends Activity {
+
+    long oneDay = 86400000;
+    long oneHour = 3600000;
+    long oneMinute = 60000;
+    long oneSecond = 1000;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +69,43 @@ public class HomeActivity extends Activity {
         }
     }
 
-    public void dayMinus(View v) {
-        Toast.makeText(this.getBaseContext(),"Minus", Toast.LENGTH_SHORT).show();
+    private void setTime(long diff){
+        ShellInterface.isSuAvailable();
+
+        if (ShellInterface.isSuAvailable()) {
+            ShellInterface.runCommand("chmod 666 /dev/alarm");
+            Calendar c = Calendar.getInstance();
+            SystemClock.setCurrentTimeMillis(c.getTimeInMillis() + diff);
+            ShellInterface.runCommand("chmod 664 /dev/alarm");
+        }
     }
-    public void dayPlus(View v) {}
-    public void hourMinus(View v) {}
-    public void hourPlus(View v) {}
-    public void deleteDb(View v) {}
+
+    public void dayMinus(View v) {
+        setTime(oneDay * -1);
+        Toast.makeText(this.getBaseContext(),"Day Subtracted", Toast.LENGTH_SHORT).show();
+    }
+
+    public void dayPlus(View v) {
+        setTime(oneDay);
+        Toast.makeText(this.getBaseContext(),"Day Added", Toast.LENGTH_SHORT).show();
+    }
+
+
+    public void hourMinus(View v) {
+        setTime(oneHour * -1);
+        Toast.makeText(this.getBaseContext(),"Hour Subtracted", Toast.LENGTH_SHORT).show();
+
+    }
+
+    public void hourPlus(View v) {
+        setTime(oneHour);
+        Toast.makeText(this.getBaseContext(),"Hour Added", Toast.LENGTH_SHORT).show();
+    }
+
+    public void deleteDb(View v) {
+//        Context context = getApplicationContext();
+//        context.deleteDatabase("PatternDB");
+//        context.deleteDatabase("RoutineDB");
+//        Toast.makeText(this.getBaseContext(),"PatternDB and RoutineDB deleted", Toast.LENGTH_SHORT).show();
+    }
 }
