@@ -25,6 +25,7 @@
             android:name="android.permission.ACCESS_SUPERUSER"
             android:maxSdkVersion="16"
             tools:ignore="ProtectedPermissions" />
+        <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
 
     </application>
 

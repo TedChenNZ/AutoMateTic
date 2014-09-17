@@ -4,13 +4,16 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
@@ -22,6 +25,8 @@ public class HomeActivity extends Activity {
     long oneSecond = 1000;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +36,12 @@ public class HomeActivity extends Activity {
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
+//        updateTimeView();
     }
+
+//    private void updateTimeView() {
+//        findViewById(R.drawable.)
+//    }
 
 
     @Override
@@ -65,8 +75,24 @@ public class HomeActivity extends Activity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+            TextView time = (TextView) rootView.findViewById(R.id.timeDisp);
+
+            Calendar c = Calendar.getInstance();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("E dd/MMM/yyyy HH:mm");
+            time.setText(sdf.format(c.getTime()));
+
             return rootView;
         }
+    }
+
+    private void updateTimeView(){
+
+        Calendar c = Calendar.getInstance();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("E dd/MMM/yyyy HH:mm");
+        TextView time = (TextView) findViewById(R.id.timeDisp);
+        time.setText(sdf.format(c.getTime()));
     }
 
     private void setTime(long diff){
@@ -78,6 +104,7 @@ public class HomeActivity extends Activity {
             SystemClock.setCurrentTimeMillis(c.getTimeInMillis() + diff);
             ShellInterface.runCommand("chmod 664 /dev/alarm");
         }
+        updateTimeView();
     }
 
     public void dayMinus(View v) {
@@ -107,5 +134,17 @@ public class HomeActivity extends Activity {
 //        context.deleteDatabase("PatternDB");
 //        context.deleteDatabase("RoutineDB");
 //        Toast.makeText(this.getBaseContext(),"PatternDB and RoutineDB deleted", Toast.LENGTH_SHORT).show();
+
+        ShellInterface.isSuAvailable();
+
+        if (ShellInterface.isSuAvailable()) {
+            ShellInterface.runCommand("chmod 666 /dev/alarm");
+
+            Settings.System.putInt(getContentResolver(),
+                    android.provider.Settings.System.AUTO_TIME, 0);
+            Settings.System.putInt(getContentResolver(),
+                    android.provider.Settings.System.AUTO_TIME, 1);
+            ShellInterface.runCommand("chmod 664 /dev/alarm");
+        }
     }
 }
